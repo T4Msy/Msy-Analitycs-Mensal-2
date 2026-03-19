@@ -1,1 +1,0 @@
-# Msy-Analitycs-Mensal-2
