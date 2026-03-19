@@ -935,7 +935,7 @@
         </div>`;
 
       try {
-        const response = await fetch("http://129.148.33.171:5678/webhook/relatorio-mensal", {
+        const response = await fetch("https://warm-polls-treasury-gay.trycloudflare.com/webhook/relatorio-mensal", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ chat: text, inicio: dataInicio, fim: dataFim })
