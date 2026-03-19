@@ -163,7 +163,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 13px;
-      color: var(--text-muted);
+      color: rgba(255,255,255,0.75);
       letter-spacing: 1px;
     }
 
@@ -529,15 +529,16 @@
     }
 
     .resultado-box thead th {
-      color: #3a3a3a;
-      padding: 14px 16px;
+      color: var(--crimson-mid);
+      padding: 16px 16px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 2.5px;
+      font-size: 11px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       text-align: center;
-      border-bottom: 1px solid #161616;
+      border-bottom: 1px solid #1e1e1e;
       white-space: nowrap;
+      background: #0d0d0d;
     }
 
     .resultado-box thead th:first-child {
@@ -550,7 +551,7 @@
 
     /* Coluna TOTAL */
     .resultado-box thead th:nth-last-child(2) {
-      color: var(--gold);
+      color: var(--crimson-mid);
       border-left: 1px solid #161616;
       background: rgba(201,168,76,0.03);
       letter-spacing: 3px;
@@ -579,7 +580,7 @@
     .resultado-box tbody td {
       padding: 16px 16px;
       text-align: center;
-      color: #888;
+      color: #c0c0c0;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       border-bottom: 1px solid #111;
@@ -599,7 +600,7 @@
 
     /* Coluna TOTAL */
     .resultado-box tbody td:nth-last-child(2) {
-      color: var(--gold-light);
+      color: #fff !important;
       font-size: 13px;
       font-weight: 500;
       border-left: 1px solid #161616;
@@ -607,11 +608,15 @@
       letter-spacing: 0.5px;
     }
 
+    .resultado-box tbody td:nth-last-child(2) strong {
+      color: #fff !important;
+    }
+
     /* Coluna MÉDIA */
     .resultado-box tbody td:last-child {
-      color: #383838;
+      color: #999;
       border-left: 1px solid #161616;
-      font-size: 11px;
+      font-size: 12px;
     }
 
     .resultado-box tbody td strong { color: var(--text-white); }
@@ -648,8 +653,8 @@
       padding: 16px 16px;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--text-muted);
+      font-size: 13px;
+      color: var(--crimson-mid);
       border-top: 1px solid rgba(139,0,0,0.35);
     }
 
@@ -657,7 +662,7 @@
       text-align: left;
       padding-left: 22px;
       font-family: 'Cinzel', serif;
-      font-size: 8px;
+      font-size: 11px;
       letter-spacing: 4px;
       text-transform: uppercase;
       color: var(--crimson-mid);
@@ -666,16 +671,25 @@
     .resultado-box tfoot td:nth-last-child(2) {
       border-left: 1px solid #161616;
       background: rgba(201,168,76,0.05);
+      color: var(--crimson-mid) !important;
+    }
+
+    .resultado-box tfoot td:nth-last-child(2) strong {
+      color: var(--crimson-mid) !important;
     }
 
     .resultado-box tfoot td:last-child {
       border-left: 1px solid #161616;
-      color: #333;
-      font-size: 11px;
+      color: var(--crimson-mid);
+      font-size: 13px;
+    }
+
+    .resultado-box tfoot td:last-child strong {
+      color: var(--crimson-mid) !important;
     }
 
     .resultado-box tfoot td strong {
-      color: var(--gold-light);
+      color: var(--crimson-mid) !important;
     }
 
     /* === FOOTER === */
@@ -777,7 +791,7 @@
       background: transparent;
       border: 1px solid #2a2a2a;
       border-radius: 2px;
-      color: var(--text-muted);
+      color: var(--text-white);
       font-family: 'JetBrains Mono', monospace;
       font-size: 9px;
       letter-spacing: 2px;
@@ -787,14 +801,8 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
-    .btn-copy:hover {
-      border-color: var(--crimson);
-      color: var(--text-light);
-    }
-    .btn-copy.copiado {
-      border-color: #2a6a2a;
-      color: #5a5;
-    }
+    .btn-copy:hover { border-color: var(--crimson); color: var(--text-light); }
+    .btn-copy.copiado { border-color: #2a6a2a; color: #5a5; }
 
     /* Error state */
     .error-state {
@@ -984,38 +992,18 @@
     function copiarTabela() {
       const table = document.querySelector(".resultado-box .table-scroll table");
       if (!table) return;
-
       let tsv = "";
-
-      // Header
-      const ths = table.querySelectorAll("thead th");
-      tsv += Array.from(ths).map(th => th.innerText.trim()).join("\t") + "\n";
-
-      // Body (só linhas visíveis)
-      const rows = table.querySelectorAll("tbody tr");
-      rows.forEach(row => {
+      tsv += Array.from(table.querySelectorAll("thead th")).map(th => th.innerText.trim()).join("\t") + "\n";
+      table.querySelectorAll("tbody tr").forEach(row => {
         if (row.style.display === "none") return;
-        const cells = Array.from(row.cells).map((td, i) => {
-          let txt = td.innerText.trim();
-          // Remove medalhas e badges do nome
-          txt = txt.replace(/🥇|🥈|🥉|#1|#2|#3/g, '').trim();
-          return txt;
-        });
-        tsv += cells.join("\t") + "\n";
+        tsv += Array.from(row.cells).map(td => td.innerText.trim().replace(/🥇|🥈|🥉/g, '').trim()).join("\t") + "\n";
       });
-
-      // Footer
-      const ftds = table.querySelectorAll("tfoot td");
-      tsv += Array.from(ftds).map(td => td.innerText.trim()).join("\t") + "\n";
-
+      tsv += Array.from(table.querySelectorAll("tfoot td")).map(td => td.innerText.trim()).join("\t") + "\n";
       navigator.clipboard.writeText(tsv).then(() => {
         const btn = document.getElementById("copyBtn");
         btn.classList.add("copiado");
         btn.querySelector("span").textContent = "✓ Copiado!";
-        setTimeout(() => {
-          btn.classList.remove("copiado");
-          btn.querySelector("span").textContent = "⎘  Copiar para Excel";
-        }, 2500);
+        setTimeout(() => { btn.classList.remove("copiado"); btn.querySelector("span").textContent = "⎘  Copiar para Excel"; }, 2500);
       });
     }
 
